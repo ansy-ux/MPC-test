@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>로그인 · 스룩페이</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design Tokens ── */
+    :root {
+      --color-point:            #FE5653;
+      --color-text-primary:     #222222;
+      --color-text-secondary:   #666666;
+      --color-text-tertiary:    #999999;
+      --color-text-info:        #009DF8;
+      --color-text-warning:     #FF9B47;
+      --color-border-default:   #d7d7d7;
+      --color-border-subtle:    #eeeeee;
+      --color-bg-list:          #f9f9f9;
+      --color-bg-btn-secondary: #f4f4f4;
+      --color-bg-info-box:      #FFF5F5;
+      --color-bg-blue-tint:     #F4F9FF;
+      --color-bg-orange-tint:   #FFF9F4;
+      --font: 'Pretendard', -apple-system, sans-serif;
+      --lh: 1.6;
+      --ls: -0.02em;
+    }
+
+    /* ── Base ── */
+    html, body {
+      height: 100%;
+      background: #f0f0f0;
+    }
+
+    /* 모바일 프레임 */
+    .frame {
+      width: 375px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #fff;
+      font-family: var(--font);
+      color: var(--color-text-primary);
+      letter-spacing: var(--ls);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 60px;
+      padding: 20px 15px;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .header__btn {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .header__btn--empty { visibility: hidden; }
+    .header__title {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 뒤로가기 아이콘 (CSS) */
+    .ic-back {
+      width: 22px;
+      height: 22px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ic-back::before {
+      content: '';
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-left: 2px solid var(--color-text-primary);
+      border-bottom: 2px solid var(--color-text-primary);
+      transform: rotate(45deg);
+      margin-left: 4px;
+    }
+
+    /* ── Contents ── */
+    .contents {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      padding: 30px 15px 80px;
+      flex-shrink: 0;
+    }
+
+    /* ── Member wrap ── */
+    .member-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    .input-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .label-input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      height: 18px;
+    }
+    .input-field {
+      width: 100%;
+      height: 46px;
+      padding: 10px;
+      border: 1px solid var(--color-border-default);
+      background: #fff;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      letter-spacing: var(--ls);
+      outline: none;
+      border-radius: 0;
+      appearance: none;
+    }
+    .input-field::placeholder { color: var(--color-text-tertiary); }
+    .input-field:focus { border-color: var(--color-text-primary); }
+
+    /* 로그인 버튼 */
+    .btn-login {
+      width: 100%;
+      height: 46px;
+      background: var(--color-text-primary);
+      color: #fff;
+      border: none;
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-login:hover { opacity: 0.88; }
+    .btn-login:active { opacity: 0.75; }
+
+    /* 아이디/비번 찾기 링크 */
+    .find-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+    .find-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .find-links a:hover { color: var(--color-text-secondary); }
+    .find-links__divider {
+      width: 1px;
+      height: 12px;
+      background: var(--color-border-default);
+    }
+
+    /* ── SNS 로그인 ── */
+    .sns-login {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* 간편 로그인 타이틀 */
+    .sns-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sns-title__line {
+      flex: 1;
+      height: 1px;
+      background: #c1c1c1;
+    }
+    .sns-title__text {
+      font-size: 14px;
+      font-weight: 400;
+      color: #c1c1c1;
+      white-space: nowrap;
+    }
+
+    /* SNS 버튼 목록 */
+    .sns-btn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sns-btn {
+      width: 100%;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      padding: 12px 18px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+    .sns-btn:hover { opacity: 0.9; }
+    .sns-btn__icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+    .sns-btn__label {
+      flex: 1;
+      text-align: center;
+    }
+    .sns-btn--kakao { background: #fee500; color: #191919; }
+    .sns-btn--naver { background: #03a94d; color: #fff; }
+    .sns-btn--apple { background: #000; color: #fff; }
+
+    /* 회원가입 등 버튼 목록 */
+    .member-btn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn-outline {
+      width: 100%;
+      height: 46px;
+      background: #fff;
+      border: 1px solid var(--color-text-primary);
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-outline:hover { background: var(--color-bg-btn-secondary); }
+    .btn-outline:active { opacity: 0.75; }
+
+    /* ── Footer ── */
+    footer { flex-shrink: 0; }
+    .footer-nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      height: 40px;
+      padding: 13px 20px;
+      background: #fff;
+      font-size: 12px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    .footer-nav a { text-decoration: none; color: var(--color-text-secondary); }
+    .footer-nav a.bold { font-weight: 600; color: var(--color-text-primary); }
+
+    .footer-body { background: var(--color-text-primary); padding: 30px 20px; }
+
+    .footer-section {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #444;
+      margin-bottom: 20px;
+    }
+    .footer-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .footer-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    .footer-info-row {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+    .footer-info-row .label { color: var(--color-text-tertiary); white-space: nowrap; }
+    .footer-info-row .value { color: #fff; }
+    .footer-info-row .value-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: #fff;
+    }
+
+    .footer-company { }
+    .footer-company-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .footer-company-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    .footer-company-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .footer-company-row .label { color: var(--color-text-tertiary); }
+    .footer-company-row .value { color: #fff; }
+    .footer-company-row a { color: #fff; text-decoration: none; }
+    .footer-company-row a:hover { text-decoration: underline; }
+
+    .footer-insurance {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .footer-insurance-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.02em;
+      cursor: pointer;
+    }
+    .footer-insurance-note {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.02em;
+      line-height: 1.6;
+    }
+
+    .footer-bottom {
+      background: var(--color-bg-btn-secondary);
+      height: 40px;
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      gap: 4px;
+    }
+    .footer-bottom strong { font-weight: 600; color: var(--color-text-primary); }
+  </style>
+</head>
+<body>
+  <div class="frame">
+
+    <!-- Header -->
+    <header class="header">
+      <button class="header__btn" aria-label="뒤로가기">
+        <span class="ic-back"></span>
+      </button>
+      <h1 class="header__title">로그인</h1>
+      <button class="header__btn header__btn--empty" aria-hidden="true"></button>
+    </header>
+
+    <!-- Contents -->
+    <main class="contents">
+
+      <!-- 아이디/비밀번호 입력 + 로그인 버튼 -->
+      <div class="member-wrap">
+        <div class="input-group">
+          <div class="input-fields">
+            <div class="label-input-box">
+              <label class="input-label" for="user-id">아이디</label>
+              <input
+                class="input-field"
+                id="user-id"
+                type="email"
+                placeholder="아이디(이메일 주소)"
+                autocomplete="email"
+              />
+            </div>
+            <div class="label-input-box">
+              <label class="input-label" for="user-pw">비밀번호</label>
+              <input
+                class="input-field"
+                id="user-pw"
+                type="password"
+                placeholder="비밀번호 (8~12자, 영문+숫자+기호 포함)"
+                autocomplete="current-password"
+              />
+            </div>
+          </div>
+          <button class="btn-login">로그인</button>
+        </div>
+
+        <!-- 아이디/비번 찾기 -->
+        <div class="find-links">
+          <a href="#">아이디 찾기</a>
+          <span class="find-links__divider"></span>
+          <a href="#">비밀번호 찾기</a>
+        </div>
+      </div>
+
+      <!-- SNS 로그인 -->
+      <div class="sns-login">
+        <div>
+          <!-- 간편 로그인/회원가입 타이틀 -->
+          <div class="sns-title" style="margin-bottom:24px;">
+            <span class="sns-title__line"></span>
+            <span class="sns-title__text">간편 로그인/회원가입</span>
+            <span class="sns-title__line"></span>
+          </div>
+
+          <!-- SNS 버튼 -->
+          <div class="sns-btn-list">
+            <button class="sns-btn sns-btn--kakao">
+              <img class="sns-btn__icon" src="https://www.figma.com/api/mcp/asset/d4f8bfc9-2be5-49c9-b00d-3fdda57b5d7d" alt="카카오" />
+              <span class="sns-btn__label">카카오로 시작하기</span>
+            </button>
+            <button class="sns-btn sns-btn--naver">
+              <img class="sns-btn__icon" src="https://www.figma.com/api/mcp/asset/79bff95c-4cce-4f35-b93d-95c6ab361f71" alt="네이버" />
+              <span class="sns-btn__label">네이버로 시작하기</span>
+            </button>
+            <button class="sns-btn sns-btn--apple">
+              <img class="sns-btn__icon" src="https://www.figma.com/api/mcp/asset/03361a60-5ad1-4240-ad46-54773c3226a0" alt="Apple" />
+              <span class="sns-btn__label">Apple로 시작하기</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 회원가입 / 비회원 버튼 -->
+        <div class="member-btn-list">
+          <button class="btn-outline">회원가입</button>
+          <button class="btn-outline">비회원 주문 / 배송조회</button>
+          <button class="btn-outline">비회원 구매하기</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <nav class="footer-nav">
+        <a href="#">이용약관</a>
+        <a href="#" class="bold">개인정보처리방침</a>
+      </nav>
+      <div class="footer-body">
+        <!-- 고객센터 -->
+        <div class="footer-section">
+          <p class="footer-section-title">CUSTOMER CENTER</p>
+          <div class="footer-info-list">
+            <div class="footer-info-row">
+              <span class="label">상담전화</span>
+              <span class="value">1234-5678</span>
+            </div>
+            <div class="footer-info-row">
+              <span class="label">상담시간</span>
+              <span class="value">평일 09:00 ~ 18:00 (주말 문의 가능)</span>
+            </div>
+            <div class="footer-info-row">
+              <span class="label">점심시간</span>
+              <div class="value-col">
+                <span>11:30 ~ 13:00</span>
+                <span>공휴일 및 임시공휴일 휴무</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 회사 정보 -->
+        <div class="footer-company">
+          <p class="footer-company-title">SROOKPAY</p>
+          <div class="footer-company-info">
+            <div class="footer-company-row">
+              <span class="label">대표</span>
+              <span class="value">홍길동</span>
+            </div>
+            <div class="footer-company-row">
+              <span class="label">사업자등록번호</span>
+              <span class="value">098-76-54321</span>
+              <span class="value">[사업자정보확인]</span>
+            </div>
+            <div class="footer-company-row">
+              <span class="label">통신판매업신고번호</span>
+              <span class="value">2016-성남분당-0209호1</span>
+            </div>
+            <div class="footer-company-row">
+              <span class="label">사업장소재지</span>
+              <span class="value">서울 중구 정동길 14 (정동) 3F</span>
+            </div>
+            <div class="footer-company-row">
+              <span class="label">이메일</span>
+              <a href="mailto:srookpay@srook.net">srookpay@srook.net</a>
+            </div>
+            <div class="footer-insurance">
+              <button class="footer-insurance-badge">보증보험 가입사실 확인</button>
+              <p class="footer-insurance-note">
+                본 사업자는 보증보험에 가입된 업체로서 신용카드, 가상계좌이체 등<br>
+                (무통장입금 제외)으로 결제 시 안전하게 거래를 하실 수 있습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>솔루션 제공업체</span>
+        <strong>SrookPay (주)에스와이폴라리스</strong>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

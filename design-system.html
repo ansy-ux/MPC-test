@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[FR] 디자인 시스템</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Point */
+      --color-point: #FE5653;
+
+      /* Font */
+      --color-text-primary:   #222222;
+      --color-text-secondary: #666666;
+      --color-text-tertiary:  #999999;
+      --color-text-info:      #009DF8;
+      --color-text-warning:   #FF9B47;
+
+      /* Border */
+      --color-border-default: #d7d7d7;
+      --color-border-subtle:  #eeeeee;
+
+      /* Background */
+      --color-bg-list:             #f9f9f9;
+      --color-bg-button-secondary: #f4f4f4;
+      --color-bg-info-box:         #FFF5F5;
+      --color-bg-blue-tint:        #F4F9FF;
+      --color-bg-orange-tint:      #FFF9F4;
+
+      /* Typography */
+      --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      --line-height: 1.6;
+      --letter-spacing: -0.02em;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: #fff;
+      color: var(--color-text-primary);
+      line-height: var(--line-height);
+      letter-spacing: var(--letter-spacing);
+    }
+
+    /* ── Layout ── */
+    .ds-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px 120px;
+    }
+
+    /* ── Header ── */
+    .ds-header {
+      border-bottom: 2px solid var(--color-border-default);
+      padding-bottom: 32px;
+      margin-bottom: 72px;
+    }
+    .ds-header__label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .ds-header__title {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    .ds-header__title span { color: var(--color-point); }
+    .ds-header__sub {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+
+    /* ── Section ── */
+    .ds-section { margin-bottom: 80px; }
+    .ds-section__title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-tertiary);
+      margin-bottom: 28px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    /* ── Color swatches ── */
+    .swatch-group { margin-bottom: 36px; }
+    .swatch-group__label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-bottom: 14px;
+    }
+    .swatch-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100px;
+    }
+    .swatch__chip {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+      border: 1px solid var(--color-border-subtle);
+    }
+    .swatch__hex {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      text-align: center;
+    }
+    .swatch__name {
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      text-align: center;
+      margin-top: -6px;
+    }
+
+    /* ── Typography ── */
+    .type-table { width: 100%; border-collapse: collapse; }
+    .type-table thead th {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-tertiary);
+      text-align: left;
+      padding: 0 0 12px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .type-table thead th:first-child { width: 120px; }
+    .type-table thead th:nth-child(2),
+    .type-table thead th:nth-child(3),
+    .type-table thead th:nth-child(4),
+    .type-table thead th:nth-child(5) { width: 90px; }
+    .type-table tbody tr { border-bottom: 1px solid var(--color-border-subtle); }
+    .type-table tbody td { padding: 20px 0; vertical-align: middle; }
+    .type-table td.meta { font-size: 12px; color: var(--color-text-tertiary); }
+    .type-table td.meta strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      margin-bottom: 2px;
+    }
+    .type-preview { color: var(--color-text-primary); }
+    .preview-bold     { font-weight: 700; }
+    .preview-semibold { font-weight: 600; }
+    .preview-regular  { font-weight: 400; }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
+    .btn-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-tertiary);
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-weight: 700;
+      letter-spacing: var(--letter-spacing);
+      line-height: 1;
+      transition: opacity 0.15s;
+      text-decoration: none;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:active { opacity: 0.7; }
+
+    /* Sizes */
+    .btn-lg  { height: 52px; padding: 0 28px; font-size: 16px; border-radius: 10px; }
+    .btn-md  { height: 44px; padding: 0 22px; font-size: 15px; border-radius: 8px;  }
+    .btn-sm  { height: 36px; padding: 0 16px; font-size: 13px; border-radius: 6px;  }
+    .btn-xs  { height: 28px; padding: 0 12px; font-size: 12px; border-radius: 4px;  }
+
+    /* Variants */
+    .btn-primary {
+      background: var(--color-point);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: var(--color-bg-button-secondary);
+      color: var(--color-text-primary);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border-default);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-point);
+    }
+    .btn-info {
+      background: var(--color-bg-blue-tint);
+      color: var(--color-text-info);
+    }
+    .btn-warning {
+      background: var(--color-bg-orange-tint);
+      color: var(--color-text-warning);
+    }
+    .btn-disabled {
+      background: var(--color-bg-button-secondary);
+      color: var(--color-text-tertiary);
+      cursor: not-allowed;
+      opacity: 1;
+    }
+    .btn-disabled:hover { opacity: 1; }
+
+    /* Full width */
+    .btn-full { width: 100%; border-radius: 10px; }
+
+    /* ── Components ── */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .comp-card {
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .comp-card__label {
+      background: var(--color-bg-list);
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-text-tertiary);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .comp-card__body { padding: 24px 20px; }
+
+    /* product_alert */
+    .product-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--color-bg-info-box);
+      border-radius: 8px;
+      padding: 14px 16px;
+      border: 1px solid #fdd;
+    }
+    .product-alert__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      background: var(--color-point);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .product-alert__text {
+      font-size: 13px;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+    }
+    .product-alert__text strong { font-weight: 700; color: var(--color-point); }
+
+    /* product_name */
+    .product-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .product-name__badge {
+      background: var(--color-point);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    .product-name__text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    /* line_banner */
+    .line-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-bg-blue-tint);
+      border-radius: 8px;
+      padding: 12px 16px;
+      border-left: 3px solid var(--color-text-info);
+    }
+    .line-banner__icon { font-size: 16px; flex-shrink: 0; }
+    .line-banner__text {
+      font-size: 13px;
+      color: var(--color-text-primary);
+      line-height: 1.5;
+    }
+    .line-banner__text strong { font-weight: 700; color: var(--color-text-info); }
+    .line-banner__close {
+      margin-left: auto;
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-tertiary);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    /* ── Spacing tokens (visual reference) ── */
+    .spacing-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+    .spacing-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .spacing-block {
+      background: var(--color-point);
+      opacity: 0.3;
+      border-radius: 2px;
+      width: 24px;
+    }
+    .spacing-label { font-size: 11px; color: var(--color-text-tertiary); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="ds-wrap">
+
+    <!-- Header -->
+    <header class="ds-header">
+      <p class="ds-header__label">스룩페이 · [FR] 라이브러리</p>
+      <h1 class="ds-header__title"><span>디자인</span> 시스템</h1>
+      <p class="ds-header__sub">Font: Pretendard &nbsp;|&nbsp; 이 파일의 모든 변수·컴포넌트는 Figma [FR] 라이브러리 기준입니다.</p>
+    </header>
+
+
+    <!-- ① COLOR ────────────────────────────── -->
+    <section class="ds-section">
+      <h2 class="ds-section__title">Color Tokens</h2>
+
+      <div class="swatch-group">
+        <p class="swatch-group__label">Point</p>
+        <div class="swatch-row">
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#FE5653;"></div>
+            <p class="swatch__hex">#FE5653</p>
+            <p class="swatch__name">--color-point</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatch-group">
+        <p class="swatch-group__label">Font</p>
+        <div class="swatch-row">
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#222222;"></div>
+            <p class="swatch__hex">#222</p>
+            <p class="swatch__name">text-primary</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#666666;"></div>
+            <p class="swatch__hex">#666</p>
+            <p class="swatch__name">text-secondary</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#999999;"></div>
+            <p class="swatch__hex">#999</p>
+            <p class="swatch__name">text-tertiary</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#009DF8;"></div>
+            <p class="swatch__hex">#009DF8</p>
+            <p class="swatch__name">text-info</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#FF9B47;"></div>
+            <p class="swatch__hex">#FF9B47</p>
+            <p class="swatch__name">text-warning</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatch-group">
+        <p class="swatch-group__label">Border</p>
+        <div class="swatch-row">
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#d7d7d7;"></div>
+            <p class="swatch__hex">#d7d7d7</p>
+            <p class="swatch__name">border-default</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#eeeeee;"></div>
+            <p class="swatch__hex">#eee</p>
+            <p class="swatch__name">border-subtle</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatch-group">
+        <p class="swatch-group__label">Background</p>
+        <div class="swatch-row">
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#f9f9f9;"></div>
+            <p class="swatch__hex">#f9f9f9</p>
+            <p class="swatch__name">bg-list</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#f4f4f4;"></div>
+            <p class="swatch__hex">#f4f4f4</p>
+            <p class="swatch__name">bg-btn-secondary</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#FFF5F5;"></div>
+            <p class="swatch__hex">#FFF5F5</p>
+            <p class="swatch__name">bg-info-box</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#F4F9FF;"></div>
+            <p class="swatch__hex">#F4F9FF</p>
+            <p class="swatch__name">bg-blue-tint</p>
+          </div>
+          <div class="swatch">
+            <div class="swatch__chip" style="background:#FFF9F4;"></div>
+            <p class="swatch__hex">#FFF9F4</p>
+            <p class="swatch__name">bg-orange-tint</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ② TYPOGRAPHY ───────────────────────── -->
+    <section class="ds-section">
+      <h2 class="ds-section__title">Typography · Pretendard</h2>
+      <table class="type-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Size</th>
+            <th>Line-height</th>
+            <th>Letter-spacing</th>
+            <th>Weight</th>
+            <th>Preview</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Headline1 -->
+          <tr>
+            <td class="meta"><strong>Headline1</strong>Bold</td>
+            <td class="meta">18px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">700</td>
+            <td><span class="type-preview preview-bold" style="font-size:18px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Headline1</strong>Semibold</td>
+            <td class="meta">18px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">600</td>
+            <td><span class="type-preview preview-semibold" style="font-size:18px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Headline1</strong>Regular</td>
+            <td class="meta">18px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">400</td>
+            <td><span class="type-preview preview-regular" style="font-size:18px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <!-- Headline2 -->
+          <tr>
+            <td class="meta"><strong>Headline2</strong>Bold</td>
+            <td class="meta">16px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">700</td>
+            <td><span class="type-preview preview-bold" style="font-size:16px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Headline2</strong>Semibold</td>
+            <td class="meta">16px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">600</td>
+            <td><span class="type-preview preview-semibold" style="font-size:16px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Headline2</strong>Regular</td>
+            <td class="meta">16px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">400</td>
+            <td><span class="type-preview preview-regular" style="font-size:16px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <!-- Contents 1 -->
+          <tr>
+            <td class="meta"><strong>Contents 1</strong>Bold</td>
+            <td class="meta">15px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">700</td>
+            <td><span class="type-preview preview-bold" style="font-size:15px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 1</strong>Semibold</td>
+            <td class="meta">15px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">600</td>
+            <td><span class="type-preview preview-semibold" style="font-size:15px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 1</strong>Regular</td>
+            <td class="meta">15px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">400</td>
+            <td><span class="type-preview preview-regular" style="font-size:15px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <!-- Contents 2 -->
+          <tr>
+            <td class="meta"><strong>Contents 2</strong>Bold</td>
+            <td class="meta">14px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">700</td>
+            <td><span class="type-preview preview-bold" style="font-size:14px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 2</strong>Semibold</td>
+            <td class="meta">14px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">600</td>
+            <td><span class="type-preview preview-semibold" style="font-size:14px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 2</strong>Regular</td>
+            <td class="meta">14px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">400</td>
+            <td><span class="type-preview preview-regular" style="font-size:14px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <!-- Contents 3 -->
+          <tr>
+            <td class="meta"><strong>Contents 3</strong>Bold</td>
+            <td class="meta">13px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">700</td>
+            <td><span class="type-preview preview-bold" style="font-size:13px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 3</strong>Semibold</td>
+            <td class="meta">13px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">600</td>
+            <td><span class="type-preview preview-semibold" style="font-size:13px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 3</strong>Regular</td>
+            <td class="meta">13px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">400</td>
+            <td><span class="type-preview preview-regular" style="font-size:13px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <!-- Contents 4 -->
+          <tr>
+            <td class="meta"><strong>Contents 4</strong>Bold</td>
+            <td class="meta">12px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">700</td>
+            <td><span class="type-preview preview-bold" style="font-size:12px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 4</strong>Semibold</td>
+            <td class="meta">12px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">600</td>
+            <td><span class="type-preview preview-semibold" style="font-size:12px;">스룩페이 타이포그래피</span></td>
+          </tr>
+          <tr>
+            <td class="meta"><strong>Contents 4</strong>Regular</td>
+            <td class="meta">12px</td><td class="meta">160%</td><td class="meta">-2%</td><td class="meta">400</td>
+            <td><span class="type-preview preview-regular" style="font-size:12px;">스룩페이 타이포그래피</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ③ BUTTON ────────────────────────────── -->
+    <section class="ds-section">
+      <h2 class="ds-section__title">Buttons</h2>
+
+      <div style="margin-bottom:36px;">
+        <p class="btn-group-label">Variants</p>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-md">Primary</button>
+          <button class="btn btn-secondary btn-md">Secondary</button>
+          <button class="btn btn-outline btn-md">Outline</button>
+          <button class="btn btn-ghost btn-md">Ghost</button>
+          <button class="btn btn-info btn-md">Info</button>
+          <button class="btn btn-warning btn-md">Warning</button>
+          <button class="btn btn-disabled btn-md" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:36px;">
+        <p class="btn-group-label">Sizes</p>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-lg">Large (52h)</button>
+          <button class="btn btn-primary btn-md">Medium (44h)</button>
+          <button class="btn btn-primary btn-sm">Small (36h)</button>
+          <button class="btn btn-primary btn-xs">XSmall (28h)</button>
+        </div>
+      </div>
+
+      <div style="max-width:360px;">
+        <p class="btn-group-label">Full Width</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-primary btn-lg btn-full">확인</button>
+          <button class="btn btn-secondary btn-lg btn-full">취소</button>
+          <button class="btn btn-outline btn-lg btn-full">로그아웃</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ④ COMPONENTS ───────────────────────── -->
+    <section class="ds-section">
+      <h2 class="ds-section__title">Components · [FR] 라이브러리</h2>
+      <div class="comp-grid">
+
+        <!-- product_alert -->
+        <div class="comp-card">
+          <div class="comp-card__label">product_alert</div>
+          <div class="comp-card__body">
+            <div class="product-alert">
+              <div class="product-alert__icon">!</div>
+              <p class="product-alert__text">
+                <strong>스룩페이 포인트</strong> 적립이 완료되었습니다.<br>
+                마이페이지에서 확인하세요.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- product_name -->
+        <div class="comp-card">
+          <div class="comp-card__label">product_name</div>
+          <div class="comp-card__body" style="display:flex;flex-direction:column;gap:16px;">
+            <div class="product-name">
+              <span class="product-name__badge">FR</span>
+              <span class="product-name__text">스룩페이 기본 상품</span>
+            </div>
+            <div class="product-name">
+              <span class="product-name__badge">NEW</span>
+              <span class="product-name__text">스룩페이 프리미엄 상품</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- line_banner -->
+        <div class="comp-card">
+          <div class="comp-card__label">line_banner</div>
+          <div class="comp-card__body" style="display:flex;flex-direction:column;gap:12px;">
+            <div class="line-banner">
+              <span class="line-banner__icon">ℹ️</span>
+              <p class="line-banner__text">
+                <strong>공지:</strong> 서비스 점검이 예정되어 있습니다.
+              </p>
+              <button class="line-banner__close" aria-label="닫기">×</button>
+            </div>
+            <div class="line-banner" style="background:var(--color-bg-orange-tint);border-left-color:var(--color-text-warning);">
+              <span class="line-banner__icon">⚠️</span>
+              <p class="line-banner__text" style="color:var(--color-text-warning);">
+                <strong>주의:</strong> 결제 정보를 확인해주세요.
+              </p>
+              <button class="line-banner__close" aria-label="닫기">×</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ⑤ SPACING (참고) ───────────────────── -->
+    <section class="ds-section">
+      <h2 class="ds-section__title">Spacing Reference</h2>
+      <div class="spacing-row">
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:4px;"></div>
+          <p class="spacing-label">4px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:8px;"></div>
+          <p class="spacing-label">8px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:12px;"></div>
+          <p class="spacing-label">12px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:16px;"></div>
+          <p class="spacing-label">16px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:20px;"></div>
+          <p class="spacing-label">20px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:24px;"></div>
+          <p class="spacing-label">24px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:32px;"></div>
+          <p class="spacing-label">32px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:40px;"></div>
+          <p class="spacing-label">40px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:48px;"></div>
+          <p class="spacing-label">48px</p>
+        </div>
+        <div class="spacing-item">
+          <div class="spacing-block" style="height:60px;"></div>
+          <p class="spacing-label">60px</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
