@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>마이페이지 · 스룩페이</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-point:              #FE5653;
+      --color-text-primary:       #222222;
+      --color-text-secondary:     #666666;
+      --color-text-tertiary:      #999999;
+      --color-text-info:          #009DF8;
+      --color-text-warning:       #FF9B47;
+      --color-border-default:     #d7d7d7;
+      --color-border-subtle:      #eeeeee;
+      --color-bg-list:            #f9f9f9;
+      --color-bg-btn-secondary:   #f4f4f4;
+      --color-bg-info-box:        #FFF5F5;
+      --color-bg-blue-tint:       #F4F9FF;
+      --color-bg-orange-tint:     #FFF9F4;
+      --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: #ddd;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ── Page Wrapper ── */
+    .page {
+      width: 375px;
+      background: #fff;
+      position: relative;
+      letter-spacing: -0.02em;
+      line-height: 1.6;
+      padding-bottom: 60px; /* docbar 높이 */
+    }
+
+    /* ── Header ── */
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+    .page-header .btn-icon {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .page-header .btn-icon img { width: 22px; height: 22px; object-fit: contain; }
+    .page-header h1 {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Divider ── */
+    .divider { height: 8px; background: var(--color-bg-list); }
+
+    /* ── Small Arrow ── */
+    .ic-arr {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 10px;
+      flex-shrink: 0;
+    }
+    .ic-arr::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-right: 1.5px solid currentColor;
+      border-top: 1.5px solid currentColor;
+      transform: rotate(45deg) translate(-1px, 1px);
+    }
+
+    /* ── mypage_top ── */
+    .mypage-top {
+      background: var(--color-bg-btn-secondary);
+      padding: 0 15px 30px;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+    }
+    .profile-name-wrap { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .name-group {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 1px;
+      font-size: 18px;
+      line-height: 1.4;
+      color: var(--color-text-primary);
+    }
+    .name-group .bold { font-weight: 700; }
+    .name-group .regular { font-weight: 400; }
+    .btn-edit {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      white-space: nowrap;
+      line-height: 1.6;
+    }
+    .profile-member-type {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .profile-member-type .shop { color: var(--color-text-secondary); }
+    .profile-member-type .grade { color: var(--color-text-info); }
+
+    .benefit-row { display: flex; gap: 4px; }
+    .benefit-item {
+      background: #fff;
+      flex: 1;
+      padding: 10px 15px;
+    }
+    .benefit-label {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 2px;
+    }
+    .benefit-value {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .benefit-value .num { font-weight: 700; color: var(--color-text-primary); }
+    .benefit-value .unit { font-weight: 400; color: var(--color-text-secondary); }
+
+    /* ── order_progress ── */
+    .order-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 30px 15px;
+    }
+    .order-progress h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      width: 100%;
+      line-height: 1.6;
+    }
+    .progress-list {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      width: 100%;
+    }
+    .progress-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .progress-item .p-num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .progress-item .p-num.dim { color: var(--color-text-tertiary); }
+    .progress-item .p-label { font-size: 12px; font-weight: 400; color: var(--color-text-primary); }
+    .progress-item .p-label.dim { color: var(--color-text-tertiary); }
+    .progress-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+      align-self: stretch;
+      flex-shrink: 0;
+      color: #999;
+    }
+    .progress-arrow::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-right: 1.5px solid currentColor;
+      border-top: 1.5px solid currentColor;
+      transform: rotate(45deg) translate(-1px, 1px);
+    }
+    .cancel-row {
+      background: var(--color-bg-list);
+      display: flex;
+      align-items: flex-start;
+      padding: 8px 10px;
+      width: 100%;
+    }
+    .cancel-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+      text-align: center;
+    }
+    .cancel-item:not(:last-child) { border-right: 1px solid var(--color-border-subtle); }
+    .cancel-item .c-label { font-size: 12px; font-weight: 400; color: var(--color-text-primary); width: 100%; }
+    .cancel-item .c-num   { font-size: 14px; font-weight: 700; color: var(--color-text-primary); width: 100%; }
+    .cancel-item.dim .c-label,
+    .cancel-item.dim .c-num { color: var(--color-text-tertiary); }
+
+    /* ── my_menu ── */
+    .my-menu { display: flex; flex-direction: column; gap: 20px; padding: 30px 15px; }
+    .menu-section { display: flex; flex-direction: column; gap: 6px; }
+    .menu-section h3 { font-size: 18px; font-weight: 700; color: var(--color-text-primary); line-height: 1.6; }
+    .menu-list { display: flex; flex-direction: column; }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
+    .menu-item img { width: 16px; height: 16px; flex-shrink: 0; }
+    .menu-item span {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+    }
+    .menu-divider { border: none; border-top: 1px solid var(--color-border-subtle); margin: 0; }
+
+    /* ── recent_order ── */
+    .recent-order { display: flex; flex-direction: column; gap: 10px; padding: 30px 15px; }
+    .recent-order h2 { font-size: 18px; font-weight: 700; color: var(--color-text-primary); line-height: 1.6; }
+    .order-list { display: flex; flex-direction: column; gap: 15px; }
+    .order-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .order-entry:last-child { border-bottom: none; padding-bottom: 0; }
+    .order-date-row { display: flex; align-items: center; justify-content: space-between; }
+    .order-date { display: flex; align-items: center; gap: 3px; }
+    .order-date .date { font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.6; }
+    .order-date .cnt  { font-size: 13px; font-weight: 600; color: var(--color-text-tertiary); }
+    .btn-detail {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      gap: 2px;
+    }
+    .order-product { display: flex; gap: 10px; align-items: flex-start; }
+    .order-thumb {
+      width: 70px;
+      height: 70px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .order-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .order-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 4px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 12px;
+      white-space: nowrap;
+      width: fit-content;
+    }
+    .badge-blue   { background: #e8f2ff; color: #009df8; }
+    .badge-gray   { background: #f1f2f5; color: #666; }
+    .badge-red    { background: #feeded; color: #fe5653; }
+    .order-prod-name {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .order-prod-opt {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      line-height: 1.2;
+    }
+    .order-prod-price {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+
+    /* ── recent_product ── */
+    .recent-product { display: flex; flex-direction: column; gap: 10px; padding: 30px 0 30px 15px; }
+    .recent-product h2 { font-size: 18px; font-weight: 700; color: var(--color-text-primary); line-height: 1.6; }
+    .product-scroll { overflow-x: auto; overflow-y: hidden; }
+    .product-scroll::-webkit-scrollbar { display: none; }
+    .product-scroll-inner { display: flex; gap: 10px; width: max-content; padding-right: 15px; }
+    .prod-card { width: 150px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+    .prod-thumb {
+      width: 150px;
+      height: 150px;
+      position: relative;
+      overflow: hidden;
+      background: var(--color-bg-btn-secondary);
+      flex-shrink: 0;
+    }
+    .prod-thumb img.prod-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .prod-thumb .wish {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+    }
+    .prod-thumb .wish img { width: 20px; height: 20px; }
+    .prod-info { display: flex; flex-direction: column; gap: 6px; }
+    .prod-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 18px;
+      max-height: 36px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .prod-price { display: flex; align-items: center; gap: 4px; line-height: normal; }
+    .prod-price .discount { font-size: 14px; font-weight: 600; color: #cdaf5b; }
+    .prod-price .price    { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+    .prod-price .unit     { font-size: 10px; font-weight: 400; color: var(--color-text-primary); }
+    .prod-tags { display: flex; gap: 4px; }
+    .prod-tag {
+      background: var(--color-bg-btn-secondary);
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      padding: 3px 5px;
+      line-height: normal;
+    }
+    .prod-tag.new-tag { color: #ff71b5; }
+
+    /* ── logout_area ── */
+    .logout-area { padding: 30px 15px; }
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn-logout img { width: 16px; height: 16px; }
+    .btn-logout span {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      line-height: 1.6;
+    }
+
+    /* ── Footer ── */
+    .footer-links {
+      background: #fff;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      height: 40px;
+      padding: 0 20px;
+    }
+    .footer-links a { font-size: 12px; color: var(--color-text-secondary); font-weight: 400; text-decoration: none; white-space: nowrap; }
+    .footer-links a.hl { font-weight: 600; color: var(--color-text-primary); }
+
+    .footer-dark { background: #222; padding: 30px 20px; display: flex; flex-direction: column; gap: 0; }
+    .footer-cs { padding-bottom: 20px; border-bottom: 1px solid #444; display: flex; flex-direction: column; gap: 10px; }
+    .footer-cs-title, .footer-co-title { font-size: 12px; font-weight: 600; color: #fff; }
+    .footer-info { display: flex; flex-direction: column; gap: 6px; }
+    .footer-row { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; font-weight: 400; }
+    .footer-row .lbl { color: #999; white-space: nowrap; }
+    .footer-row .val { color: #fff; }
+    .footer-row .val.flex-col { display: flex; flex-direction: column; gap: 4px; }
+    .footer-row a { color: #fff; text-decoration: none; }
+
+    .footer-co { padding-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .footer-insurance { display: flex; flex-direction: column; gap: 8px; margin-top: 0; }
+    .btn-insurance {
+      display: inline-flex;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      font-family: var(--font-family);
+    }
+    .footer-insurance-desc { font-size: 10px; color: #999; line-height: 16px; letter-spacing: -0.02em; }
+
+    .footer-solution {
+      background: var(--color-bg-btn-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+    }
+    .footer-solution p { font-size: 12px; font-weight: 400; color: var(--color-text-secondary); white-space: nowrap; }
+    .footer-solution span { color: var(--color-text-primary); }
+
+    /* ── Docbar ── */
+    .docbar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 375px;
+      z-index: 200;
+      background: #fff;
+      border-top: 1px solid var(--color-border-subtle);
+      overflow: visible;
+    }
+    .nav-tabs { display: flex; }
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 60px;
+      padding: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .nav-tab img { width: 26px; height: 26px; }
+    .nav-tab span { font-size: 12px; font-weight: 400; color: #000; white-space: nowrap; line-height: normal; }
+
+    .quick-menu {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .quick-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .quick-btn.q-home { background: #636363; }
+    .quick-btn.q-home img { width: 18px; height: 18px; object-fit: contain; }
+    .quick-btn.q-naver { background: #03c75a; padding: 0; }
+    .quick-btn.q-naver img { width: 100%; height: 100%; object-fit: cover; }
+    .quick-btn.q-ch { background: #ffe100; padding: 0; }
+    .quick-btn.q-ch img { width: 100%; height: 100%; object-fit: cover; }
+    .quick-btn.q-top { background: #fff; border: 1px solid #ddd; }
+    .quick-btn.q-top img { width: 18px; height: 18px; object-fit: contain; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Header ── -->
+  <header class="page-header">
+    <button class="btn-icon" aria-label="뒤로가기">
+      <img src="https://www.figma.com/api/mcp/asset/8ca06836-4a82-400f-9655-3cd885dc1507" alt="뒤로가기" style="transform:scaleX(-1);" />
+    </button>
+    <h1>마이페이지</h1>
+    <button class="btn-icon" aria-label="알림설정">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 1.833a7.333 7.333 0 0 0-7.333 7.334v5.5l-1.834 1.833v.917h18.334v-.917L18.333 14.667v-5.5A7.333 7.333 0 0 0 11 1.833zM11 20.167a2.75 2.75 0 0 0 2.75-2.75H8.25A2.75 2.75 0 0 0 11 20.167z" fill="#222"/>
+        <circle cx="16.5" cy="5.5" r="3.5" fill="#FE5653" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- ── mypage_top ── -->
+  <section class="mypage-top">
+    <div class="profile">
+      <div class="profile-name-wrap">
+        <div class="profile-name-row">
+          <div class="name-group">
+            <span class="bold">홍길동</span>
+            <span class="regular">님</span>
+          </div>
+          <button class="btn-edit">정보수정</button>
+        </div>
+        <div class="profile-member-type">
+          <span class="shop">스룩페이샵</span>
+          <span class="grade">일반회원</span>
+        </div>
+      </div>
+    </div>
+    <div class="benefit-row">
+      <div class="benefit-item">
+        <div class="benefit-label">쿠폰 <span class="ic-arr" style="color:var(--color-text-tertiary);"></span></div>
+        <div class="benefit-value"><span class="num">2</span><span class="unit">장</span></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-label">포인트 <span class="ic-arr" style="color:var(--color-text-tertiary);"></span></div>
+        <div class="benefit-value"><span class="num">1,000</span><span class="unit">P</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── order_progress ── -->
+  <section class="order-progress">
+    <h2>진행중인 주문</h2>
+    <div class="progress-list">
+      <div class="progress-item">
+        <span class="p-num">9999</span>
+        <span class="p-label">입금대기</span>
+      </div>
+      <div class="progress-arrow"></div>
+      <div class="progress-item">
+        <span class="p-num">1</span>
+        <span class="p-label">결제완료</span>
+      </div>
+      <div class="progress-arrow"></div>
+      <div class="progress-item">
+        <span class="p-num dim">0</span>
+        <span class="p-label dim">상품준비중</span>
+      </div>
+      <div class="progress-arrow"></div>
+      <div class="progress-item">
+        <span class="p-num dim">0</span>
+        <span class="p-label dim">배송중</span>
+      </div>
+      <div class="progress-arrow"></div>
+      <div class="progress-item">
+        <span class="p-num dim">0</span>
+        <span class="p-label dim">배송완료</span>
+      </div>
+    </div>
+    <div class="cancel-row">
+      <div class="cancel-item">
+        <span class="c-label">취소중</span>
+        <span class="c-num">2</span>
+      </div>
+      <div class="cancel-item dim">
+        <span class="c-label">교환중</span>
+        <span class="c-num">0</span>
+      </div>
+      <div class="cancel-item dim">
+        <span class="c-label">반품중</span>
+        <span class="c-num">0</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── my_menu ── -->
+  <section class="my-menu">
+    <div class="menu-section">
+      <h3>주문·배송</h3>
+      <div class="menu-list">
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/82c23a70-6a16-467d-ab30-7d8ab569b29d" alt="" />
+          <span>주문내역</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/d51dc357-a418-4501-a388-1a269d50e23b" alt="" />
+          <span>정기결제 관리</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/f39bfdd0-6b84-4e99-81b0-78cec3645ace" alt="" />
+          <span>배송지 관리</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/938b8d98-6f5a-4317-9713-8ba899739b18" alt="" />
+          <span>찜리스트</span>
+        </button>
+      </div>
+    </div>
+    <hr class="menu-divider" />
+    <div class="menu-section">
+      <h3>고객센터·상담</h3>
+      <div class="menu-list">
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/7c8c3c7b-2b44-4508-b8ef-7802312924e6" alt="" />
+          <span>공지사항</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/be566e9b-dae3-4516-8048-fd2c66f4b177" alt="" />
+          <span>이벤트</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/80a95ac5-a55f-4e6e-b05c-0050c159e5ea" alt="" />
+          <span>내 상품문의</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/bf1cbe15-599d-42a5-91d6-e82523994a1f" alt="" />
+          <span>내 주문문의</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/6f250029-4a14-46bf-be52-307f0cf4f080" alt="" />
+          <span>상품 후기</span>
+        </button>
+        <button class="menu-item">
+          <img src="https://www.figma.com/api/mcp/asset/eceb3d81-a410-49fa-8f47-62482eecad47" alt="" />
+          <span>자주하는 질문</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── recent_order ── -->
+  <section class="recent-order">
+    <h2>최근 주문 정보</h2>
+    <div class="order-list">
+
+      <!-- 주문 1 : 입금대기 -->
+      <div class="order-entry">
+        <div class="order-date-row">
+          <div class="order-date">
+            <span class="date">2025.12.05</span>
+            <span class="cnt">1건</span>
+          </div>
+          <button class="btn-detail">상세보기 <span class="ic-arr"></span></button>
+        </div>
+        <div class="order-product">
+          <div class="order-thumb">
+            <img src="https://www.figma.com/api/mcp/asset/8d757c65-199f-41e5-bdde-5f5660387803" alt="블루 스트레이트 데님팬츠" />
+          </div>
+          <div class="order-info">
+            <span class="status-badge badge-blue">입금대기</span>
+            <div>
+              <p class="order-prod-name">블루 스트레이트 데님팬츠</p>
+              <p class="order-prod-opt">컬러 : 진청</p>
+            </div>
+            <p class="order-prod-price">641,700원</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 주문 2 : 배송준비 -->
+      <div class="order-entry">
+        <div class="order-date-row">
+          <div class="order-date">
+            <span class="date">2025.12.05</span>
+            <span class="cnt">3건</span>
+          </div>
+          <button class="btn-detail">상세보기 <span class="ic-arr"></span></button>
+        </div>
+        <div class="order-product">
+          <div class="order-thumb">
+            <img src="https://www.figma.com/api/mcp/asset/00751e40-5ce2-4a99-a367-cdc1895b7000" alt="클래식 러닝화" />
+          </div>
+          <div class="order-info">
+            <span class="status-badge badge-gray">배송준비</span>
+            <div>
+              <p class="order-prod-name">클래식 러닝화 3color</p>
+              <p class="order-prod-opt">컬러 : 옐로우</p>
+              <p class="order-prod-opt">사이즈 : 245</p>
+            </div>
+            <p class="order-prod-price">75,600원</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 주문 3 : 주문취소 -->
+      <div class="order-entry">
+        <div class="order-date-row">
+          <div class="order-date">
+            <span class="date">2025.12.05</span>
+            <span class="cnt">1건</span>
+          </div>
+          <button class="btn-detail">상세보기 <span class="ic-arr"></span></button>
+        </div>
+        <div class="order-product">
+          <div class="order-thumb">
+            <img src="https://www.figma.com/api/mcp/asset/69039163-d692-4a14-b2b0-15a7d5c70b7a" alt="스테인리스 모듈 4단 트롤리" />
+          </div>
+          <div class="order-info">
+            <span class="status-badge badge-red">주문취소</span>
+            <div>
+              <p class="order-prod-name">스테인리스 모듈 4단 트롤리</p>
+            </div>
+            <p class="order-prod-price">160,940원</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── recent_product ── -->
+  <section class="recent-product">
+    <h2>최근본 상품</h2>
+    <div class="product-scroll">
+      <div class="product-scroll-inner">
+
+        <!-- 상품 1 -->
+        <div class="prod-card">
+          <div class="prod-thumb">
+            <img class="prod-img" src="https://www.figma.com/api/mcp/asset/95a448fb-3610-4b36-8e41-5657cf47e592" alt="셀레나 미니 크로스&토트백" />
+            <div class="wish"><img src="https://www.figma.com/api/mcp/asset/d6b14726-ab85-4b3a-9cac-44cde02aed60" alt="" /></div>
+          </div>
+          <div class="prod-info">
+            <p class="prod-name">셀레나 미니 크로스&amp;토트백 레드브라운</p>
+            <div class="prod-price">
+              <span class="discount">24%</span>
+              <span class="price">137,788</span>
+              <span class="unit">원</span>
+            </div>
+            <div class="prod-tags">
+              <span class="prod-tag">무료배송</span>
+              <span class="prod-tag new-tag">NEW</span>
+              <span class="prod-tag">BEST</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상품 2 -->
+        <div class="prod-card">
+          <div class="prod-thumb">
+            <img class="prod-img" src="https://www.figma.com/api/mcp/asset/b009a267-3144-41cc-8e2a-87b9475b816b" alt="빅로고 쇼트 버킷햇" />
+            <div class="wish"><img src="https://www.figma.com/api/mcp/asset/d6b14726-ab85-4b3a-9cac-44cde02aed60" alt="" /></div>
+          </div>
+          <div class="prod-info">
+            <p class="prod-name">빅로고 쇼트 버킷햇 벙거지 모자 2color</p>
+            <div class="prod-price">
+              <span class="discount">50%</span>
+              <span class="price">16,275</span>
+              <span class="unit">원</span>
+            </div>
+            <div class="prod-tags">
+              <span class="prod-tag">무료배송</span>
+              <span class="prod-tag new-tag">NEW</span>
+              <span class="prod-tag">BEST</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상품 3 -->
+        <div class="prod-card">
+          <div class="prod-thumb">
+            <img class="prod-img" src="https://www.figma.com/api/mcp/asset/c153e6a7-403d-4f47-8b32-316bc825dc12" alt="" />
+            <div class="wish"><img src="https://www.figma.com/api/mcp/asset/d6b14726-ab85-4b3a-9cac-44cde02aed60" alt="" /></div>
+          </div>
+          <div class="prod-info">
+            <p class="prod-name">제품명이 들어가는 공간입니다. 최대 2줄까지 노출됩니다. 제품명</p>
+            <div class="prod-price">
+              <span class="discount">7%</span>
+              <span class="price">641,700</span>
+              <span class="unit">원</span>
+            </div>
+            <div class="prod-tags">
+              <span class="prod-tag">무료배송</span>
+              <span class="prod-tag new-tag">NEW</span>
+              <span class="prod-tag">BEST</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상품 4 (빈 슬롯) -->
+        <div class="prod-card">
+          <div class="prod-thumb" style="background:var(--color-bg-btn-secondary);">
+            <div class="wish"><img src="https://www.figma.com/api/mcp/asset/d6b14726-ab85-4b3a-9cac-44cde02aed60" alt="" /></div>
+          </div>
+          <div class="prod-info">
+            <p style="font-size:12px;font-weight:600;color:var(--color-text-primary);line-height:normal;">CI Company</p>
+            <p class="prod-name">제품명이 들어가는 공간입니다. 최대 2줄까지 노출됩니다. 제품명</p>
+            <div class="prod-price">
+              <span class="discount">7%</span>
+              <span class="price">641,700</span>
+              <span class="unit">원</span>
+            </div>
+            <div class="prod-tags">
+              <span class="prod-tag">무료배송</span>
+              <span class="prod-tag new-tag">NEW</span>
+              <span class="prod-tag">BEST</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── logout_area ── -->
+  <div class="logout-area">
+    <button class="btn-logout">
+      <img src="https://www.figma.com/api/mcp/asset/b8d65514-50e8-480e-90a8-72adb730c6d9" alt="" />
+      <span>로그아웃</span>
+    </button>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-links">
+      <a href="#">이용약관</a>
+      <a href="#" class="hl">개인정보처리방침</a>
+    </div>
+    <div class="footer-dark">
+      <div class="footer-cs">
+        <p class="footer-cs-title">CUSTOMER CENTER</p>
+        <div class="footer-info">
+          <div class="footer-row">
+            <span class="lbl">상담전화</span>
+            <span class="val">1234-5678</span>
+          </div>
+          <div class="footer-row">
+            <span class="lbl">상담시간</span>
+            <span class="val">평일 09:00 ~ 18:00 (주말 문의 가능)</span>
+          </div>
+          <div class="footer-row" style="align-items:flex-start;">
+            <span class="lbl">점심시간</span>
+            <span class="val flex-col">
+              <span>11:30 ~ 13:00</span>
+              <span>공휴일 및 임시공휴일 휴무</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-co">
+        <p class="footer-co-title">SROOKPAY</p>
+        <div class="footer-info">
+          <div class="footer-row">
+            <span class="lbl">대표</span>
+            <span class="val">홍길동</span>
+          </div>
+          <div class="footer-row" style="flex-wrap:wrap;">
+            <span class="lbl">사업자등록번호</span>
+            <span class="val">098-76-54321</span>
+            <span class="val">&nbsp;[사업자정보확인]</span>
+          </div>
+          <div class="footer-row">
+            <span class="lbl">통신판매업신고번호</span>
+            <span class="val">2016-성남분당-0209호1</span>
+          </div>
+          <div class="footer-row">
+            <span class="lbl">사업장소재지</span>
+            <span class="val">서울 중구 정동길 14 (정동) 3F</span>
+          </div>
+          <div class="footer-row">
+            <span class="lbl">이메일</span>
+            <a href="mailto:srookpay@srook.net" class="val">srookpay@srook.net</a>
+          </div>
+        </div>
+        <div class="footer-insurance">
+          <button class="btn-insurance">보증보험 가입사실 확인</button>
+          <p class="footer-insurance-desc">본 사업자는 보증보험에 가입된 업체로서 신용카드, 가상계좌이체 등<br />(무통장입금 제외)으로 결제 시 안전하게 거래를 하실 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-solution">
+      <p>솔루션 제공업체 <span>SrookPay (주)에스와이폴라리스</span></p>
+    </div>
+  </footer>
+
+</div><!-- .page -->
+
+<!-- ── Docbar (fixed bottom) ── -->
+<nav class="docbar">
+  <div class="quick-menu">
+    <button class="quick-btn q-home" aria-label="홈으로">
+      <img src="https://www.figma.com/api/mcp/asset/72d56301-e670-4ab9-a43e-49c70d56d365" alt="" />
+    </button>
+    <button class="quick-btn q-naver" aria-label="네이버 채널">
+      <img src="https://www.figma.com/api/mcp/asset/a4cd786f-2624-4978-ab0a-a35bf77bda49" alt="Naver" />
+    </button>
+    <button class="quick-btn q-ch" aria-label="채널톡">
+      <img src="https://www.figma.com/api/mcp/asset/400fb1d4-d983-43b3-9b39-b71861fe6f57" alt="CH" />
+    </button>
+    <button class="quick-btn q-top" aria-label="맨 위로" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <img src="https://www.figma.com/api/mcp/asset/dd029910-f711-4292-aa0c-834dedcaaa01" alt="↑" />
+    </button>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab">
+      <img src="https://www.figma.com/api/mcp/asset/42f6d263-d16c-478e-8b23-76cc794a1201" alt="" />
+      <span>카테고리</span>
+    </button>
+    <button class="nav-tab">
+      <img src="https://www.figma.com/api/mcp/asset/76b9e91b-bde4-40ea-b466-cb31c23ff902" alt="" />
+      <span>홈</span>
+    </button>
+    <button class="nav-tab">
+      <img src="https://www.figma.com/api/mcp/asset/8c380f7e-7f78-4a9c-b5d2-4a4c2ef726f5" alt="" />
+      <span>마이페이지</span>
+    </button>
+    <button class="nav-tab">
+      <img src="https://www.figma.com/api/mcp/asset/54f6fb3d-3f0f-4955-89bd-dc818b204116" alt="" />
+      <span>장바구니</span>
+    </button>
+  </div>
+</nav>
+
+</body>
+</html>
